@@ -1,124 +1,240 @@
-#  AI-Powered Smart Email Classifier V 0.0.0.001
+# Customer IT Support – Email Classification Dataset
 
-![Python](https://img.shields.io/badge/Python-3.10%2B-blue)
-![Streamlit](https://img.shields.io/badge/Streamlit-1.28-FF4B4B)
-![PyTorch](https://img.shields.io/badge/PyTorch-2.0-orange)
-![Scikit-Learn](https://img.shields.io/badge/Sklearn-1.2.2-yellow)
-![Status](https://img.shields.io/badge/Status-Deployed-success)
+## Overview
 
-An intelligent customer support triage tool that automatically categorizes incoming emails and assigns urgency levels. Designed to help support teams reduce manual sorting time, prioritize critical issues, and improve response efficiency.
+This project focuses on **automatic e-mail classification** for enterprise IT support systems.
+The objective is to classify incoming emails into meaningful categories and assign priorities using **Natural Language Processing and Machine Learning** techniques.
 
----
-
-##  Live Demo
-**[Click here to view the deployed app](https://email-class-by-yours-truly.streamlit.app/)**
----
-![deployed app](/images/screenshot.png)
-
-##  Key Features
-
-### 1. Automated Categorization
-Classifies emails into four distinct business intent categories using a **Quantized DistilBERT** transformer model:
-* 📝 **Complaint:** Issues, failures, or dissatisfaction.
-* 💡 **Feedback:** Praise or suggestions.
-* ❓ **Request:** Inquiries about pricing, demos, or information.
-* 🗑️ **Spam:** Irrelevant or promotional content.
-
-### 2. Urgency Detection
-Determines the priority level of an email using a **Support Vector Machine (SVM)** pipeline with TF-IDF vectorization:
-* 🔴 **High:** Critical issues requiring immediate attention (e.g., system failure).
-* 🟠 **Medium:** Standard requests (e.g., pricing inquiries).
-* 🟢 **Low:** General feedback or spam.
-
-### 3. Operational Dashboard
-A real-time analytics dashboard powered by **Plotly** to visualize:
-* Ticket volume trends.
-* Distribution of urgency levels.
-* Category breakdowns.
-
-### 4. Smart Preprocessing
-Includes a custom NLP cleaning pipeline that handles:
-* Lemmatization & Stop-word removal.
-* Regex cleaning (removing timestamps, email headers).
-* Bias removal (stripping specific "priority terms" during training to prevent overfitting).
+The dataset simulates real corporate inbox traffic, including noisy text, inconsistent casing, HTML content, and contact details.
 
 ---
 
-##  Technical Architecture
+## Problem Statement
 
-### Model Compression & Handling
-To adhere to GitHub's 100MB file limit and optimize for Cloud deployment, this project uses a custom architecture:
-1.  **Dynamic Quantization:** The DistilBERT model was quantized from FP32 to INT8, reducing size from ~260MB to ~65MB.
-2.  **File Splitting:** The model file is physically split into `.part0` and `.part1` to bypass Git constraints.
-3.  **Auto-Stitcher:** On application startup, a custom script in `app.py` automatically detects the parts and reassembles them into a functional model in memory.
+Enterprise IT support teams receive a high volume of emails daily. These emails vary in intent and urgency and include spam, complaints, feedback, and service requests.
 
-### Tech Stack
-* **Frontend:** Streamlit
-* **NLP/ML:** Hugging Face Transformers, PyTorch, Scikit-learn, NLTK
-* **Visualization:** Plotly Express
-* **Data Handling:** Pandas, Joblib
+Manual sorting and prioritization lead to delays, inconsistency, and operational inefficiency.
+This project addresses the problem by building an **automated e-mail classification pipeline**.
 
 ---
 
-##  Installation & Local Setup
+## Objective of Email Classification
 
-Follow these steps to run the application on your local machine.
+The main objectives are:
 
- 1. Clone the Repository
-```
-git clone [https://github.com/vickyax/Email-Class-By-Yours-Truly.git](https://github.com/vickyax/Email-Class-By-Yours-Truly.git)
-cd Email-Class-By-Yours-Truly
-```
-2. Create a Virtual Environment
+1. Automatically classify emails into predefined categories
+2. Reduce manual effort in e-mail triaging
+3. Enable faster response and escalation
+4. Build a scalable baseline NLP system using TF-IDF
 
-It is highly recommended to use a virtual environment to manage dependencies.
-Bash
-```
-# Windows
-python -m venv env
-.\env\Scripts\activate
+---
 
-# Mac/Linux
-python3 -m venv env
-source env/bin/activate
-```
-3. Install Dependencies
+## Email Categories
 
-Crucial: This project requires specific library versions to ensure compatibility between transformers and huggingface-hub.
-Bash
-```
-pip install -r project_folder/requirements.txt
-```
-4. Run the Application
+Each email belongs to one of the following four classes:
 
-Navigate to the root directory and run:
-Bash
-```
-streamlit run project_folder/app.py
-```
-The first run make take a few seconds as the Auto-Stitcher reassembles the model.
-Project Structure
-```
-Email-Class-By-Yours-Truly/
-│
-├── project_folder/               # Main Application Source Code
-│   ├── app.py                    # Streamlit Frontend & Application Logic
-│   ├── requirements.txt          # Python Dependencies
-│   │
-│   ├── quantized_model/          # DistilBERT Model (Category)
-│   │   ├── config.json
-│   │   ├── quantized_bert.pth.part0  # Split Model Part 1
-│   │   ├── quantized_bert.pth.part1  # Split Model Part 2
-│   │   ├── tokenizer.json
-│   │   └── vocab.txt
-│   │
-│   └── trained_priority_models/  # SVM/RF Model (Urgency)
-│       ├── poly_svc_model.joblib
-│       └── tfidf_vectorizer.joblib
-│
-├── .gitignore                    # Git Ignore file (excludes env/)
-└── README.md                     # Project Documentation
+SPAM
+complaint
+feedback
+request
 
+These categories represent common patterns observed in enterprise IT support inboxes.
+
+---
+
+## Priority Levels
+
+Each email is also assigned a priority level:
+
+low
+medium
+high
+
+This allows models to support **priority-based routing and escalation**.
+
+---
+
+## Dataset Description
+
+The dataset consists of enterprise-style email messages stored in CSV format.
+
+Each row represents one email and contains:
+
+id
+subject
+body
+label
+priority
+
+The dataset is balanced across all four labels to ensure fair model training.
+
+---
+
+## Data Characteristics
+
+The dataset intentionally includes realistic noise such as:
+
+Random capitalization
+HTML links
+Email addresses
+Lengthy and varied text content
+
+These characteristics help test preprocessing robustness and model generalization.
+
+---
+
+## Project Structure
+
+The project follows a clean ML workflow structure:
+
+Raw datasets are stored separately
+Cleaned datasets are maintained for modeling
+Train and test splits are isolated
+Experiments are conducted in Jupyter notebooks
+
+This separation improves reproducibility and clarity.
+
+---
+
+## Email Classification Pipeline
+
+The typical pipeline used in this project is:
+
+1. Load raw email data
+2. Clean and normalize text
+3. Combine subject and body fields
+4. Convert text to numerical features
+5. Train classification models
+6. Evaluate performance
+
+---
+
+## Feature Engineering (TF-IDF)
+
+TF-IDF vectorization is used to convert email text into numerical representations.
+
+TF-IDF helps by:
+
+Reducing the impact of common words
+Highlighting discriminative terms
+Improving linear model performance
+
+Unigrams and bigrams are used to capture both keywords and short phrases.
+
+---
+
+## Model Training and Evaluation
+
+The following models are suitable for this dataset:
+
+Logistic Regression
+Naive Bayes
+Linear Support Vector Machine
+
+Evaluation is performed using accuracy, precision, recall, and F1-score.
+
+---
+
+## Installation and Setup
+
+### Create a virtual environment
+
+```bash
+python -m venv .venv
 ```
 
-Author: *Vickyax* Built with ❤️ using Streamlit & Python
+### Activate the environment
+
+Windows
+
+```bash
+.venv\Scripts\activate
+```
+
+Linux or macOS
+
+```bash
+source .venv/bin/activate
+```
+
+---
+
+### Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+## How to Run the Project
+
+Open the notebook and execute cells sequentially:
+
+```bash
+jupyter notebook notebooks-kaggle/email-data.ipynb
+```
+
+The notebook covers preprocessing, TF-IDF vectorization, training, and evaluation.
+
+---
+
+## Use Cases
+
+This project can be extended to:
+
+Enterprise email triaging
+IT support automation
+Spam filtering systems
+Priority-based ticket routing
+Academic NLP projects
+
+---
+
+## Technologies Used
+
+Python
+pandas
+NumPy
+scikit-learn
+Jupyter Notebook
+
+---
+
+## Results and Observations
+
+TF-IDF combined with linear classifiers provides strong baseline performance for email classification tasks.
+Balanced data improves per-class recall and interpretability.
+
+---
+
+## Limitations
+
+TF-IDF does not capture semantic meaning or context.
+Performance may drop on very short or ambiguous emails.
+
+---
+
+## Future Improvements
+
+Possible enhancements include:
+
+Using word embeddings or transformer models
+Handling multilingual emails
+Adding thread-level context
+Deploying as an API-based service
+
+---
+
+## License
+
+This project is released under the **MIT License**.
+All data is synthetically generated and safe for academic and personal use.
+
+---
+
+## Author
+
+Developed for **enterprise e-mail classification and NLP experimentation**.
+
+---
