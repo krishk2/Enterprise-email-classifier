@@ -11,8 +11,12 @@ load_dotenv(os.path.join(os.path.dirname(os.path.dirname(__file__)), '.env'))
 
 def get_secret(key, default=None):
     # Try Streamlit Secrets first (Cloud)
-    if key in st.secrets:
-        return st.secrets[key]
+    try:
+        if key in st.secrets:
+            return st.secrets[key]
+    except Exception:
+        pass # Secrets not configured or file missing, fall back to environment
+    
     # Fallback to os.environ (Local)
     return os.getenv(key, default)
 
