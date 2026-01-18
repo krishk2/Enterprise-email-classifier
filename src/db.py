@@ -3,13 +3,21 @@ import os
 import pymongo
 import datetime
 import bcrypt
+import streamlit as st
 from dotenv import load_dotenv
 
-# Load explicitly from root
+# Load explicitly from root (Local Dev)
 load_dotenv(os.path.join(os.path.dirname(os.path.dirname(__file__)), '.env'))
 
-MONGO_URI = os.getenv("MONGO_URI")
-DB_NAME = os.getenv("DB_NAME", "email_classifier_db")
+def get_secret(key, default=None):
+    # Try Streamlit Secrets first (Cloud)
+    if key in st.secrets:
+        return st.secrets[key]
+    # Fallback to os.environ (Local)
+    return os.getenv(key, default)
+
+MONGO_URI = get_secret("MONGO_URI")
+DB_NAME = get_secret("DB_NAME", "email_classifier_db")
 
 # Cache connection
 client = None
