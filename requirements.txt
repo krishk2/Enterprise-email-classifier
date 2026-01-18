@@ -1,0 +1,11 @@
+bcrypt
+dnspython
+joblib
+nltk
+numpy
+pandas
+plotly
+pymongo
+python-dotenv
+scikit-learn
+streamlit
