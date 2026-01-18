@@ -32,12 +32,25 @@ def get_db():
     if db is not None:
         return db
     try:
-        client = pymongo.MongoClient(MONGO_URI)
+        if not MONGO_URI:
+            print("❌ ERROR: MONGO_URI is missing or empty!")
+            return None
+        
+        # Masked URI for logs
+        masked_uri = MONGO_URI.split('@')[-1] if '@' in MONGO_URI else "NO_CREDENTIALS"
+        print(f"🔌 Connecting to MongoDB: ...@{masked_uri} (DB: {DB_NAME})")
+
+        # Fail fast (5s timeout)
+        client = pymongo.MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)
+        
+        # Force a check
+        client.admin.command('ping')
+        
         db = client[DB_NAME]
-        print("Connected to MongoDB")
+        print("✅ Connected to MongoDB!")
         return db
     except Exception as e:
-        print(f"Error connecting to MongoDB: {e}")
+        print(f"❌ Error connecting to MongoDB: {e}")
         return None
 
 # --- AUTH ---
