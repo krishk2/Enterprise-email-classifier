@@ -10,6 +10,14 @@ from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 import plotly.express as px
 
+hide_hd="""
+<style>
+header {visibility: hidden;}
+</style>
+"""
+st.markdown(hide_hd, unsafe_allow_html=True)
+
+
 # --- PAGE CONFIG ---
 st.set_page_config(
     page_title="Enterprise Email Classifier",
@@ -18,12 +26,6 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-hide_hd="""
-<style>
-header {visibility: hidden;}
-</style>
-"""
-st.markdown(hide_hd, unsafe_allow_html=True)
 
 
 # --- PARTICLE BACKGROUND ---
