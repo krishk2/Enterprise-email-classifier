@@ -12,7 +12,6 @@ import plotly.express as px
 
 hide_hd="""
 <style>
-header {visibility: hidden;}
 </style>
 """
 st.markdown(hide_hd, unsafe_allow_html=True)
